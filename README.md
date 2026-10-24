@@ -1,16 +1,16 @@
 # MutedToMuzzled
 
-Vencord QuickCSS snippet: when you're muted, your mic icon becomes a muzzle and the "Unmute" tooltip says "Muzzled". Works in any Discord language.
+Vencord QuickCSS snippet: replaces Discord's mic / headphone icons with puppy-themed ones and swaps tooltips to match. Works on your own buttons **and** on other participants in voice channels. Works in any Discord language.
+
+## What it does
+
+- Mic / deafen buttons → `bark.png`, `dog.png`, `cage2.png`, `cage.png`
+- Other participants → mute / deafen icons in the sidebar and call view, plus a bark overlay when they speak
+- Tooltips → `Muzzled`, `Caged`, `Bark!!`, `Cage`
 
 ## Install
 
 Paste this at the very top of your QuickCSS:
 
 ```css
-@import url("https://moshikiwi.github.io/MutedToMuzzledVencordPort/MutedToMuzzled.css");
-```
-
-## Credits
-
-Based on the MutedToMuzzled BetterDiscord plugin by 1xzozz.
-Add me on discord: `Moshi__` if anything goes bad or post an issue on this repo
+@import url("https://raw.githubusercontent.com/djdenicore/MutedToMuzzledVencordPort-Fix-/master/MutedToMuzzled.css");
