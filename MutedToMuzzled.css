@@ -15,58 +15,57 @@
    1. LOCAL BUTTONS (bottom-left bar)
    ========================================================== */
 
-/* Скрываем ВСЕ оригинальные иконки внутри кнопок */
-[class*="audioButtonParent_"] button svg,
+/* Скрываем оригинальные иконки */
 [class*="audioButtonParent_"] button [class*="lottieIcon_"] > svg {
     display: none !important;
 }
 
-/* Фиксируем размер контейнера иконки, чтобы ничего не съезжало */
-[class*="audioButtonParent_"] button [class*="lottieIcon_"] {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 21px !important;
-    height: 21px !important;
+/* Базовый слой для картинки (как в рабочей версии) */
+[class*="audioButtonParent_"] button [class*="lottieIcon_"]::after {
+    content: "";
+    display: block;
+    width: 21px;
+    height: 21px;
     background: center / contain no-repeat;
+    pointer-events: none;
 }
 
 /* --- Микрофон (первая кнопка) --- */
-[class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-    > button [class*="lottieIcon_"] {
-    background-image: var(--pup-speaking); /* bark.png */
-    scale: 1.3;
-}
-
-/* Микрофон выключен / запрещен (Server Mute) */
-[class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-    > button[aria-checked="true"] [class*="lottieIcon_"],
-[class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-    > button[aria-disabled="true"] [class*="lottieIcon_"],
-[class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-    > button[class*="redGlow"] [class*="lottieIcon_"] {
-    background-image: var(--pup-muted) !important; /* dog.png */
+[class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *) > button {
+    /* Микрофон включен */
+    &[aria-checked="false"] [class*="lottieIcon_"]::after {
+        background-image: var(--pup-speaking);
+        scale: 1.3;
+    }
+    
+    /* Микрофон выключен ИЛИ Server Mute */
+    &[aria-checked="true"] [class*="lottieIcon_"]::after,
+    &[aria-disabled="true"] [class*="lottieIcon_"]::after,
+    &[class*="redGlow"] [class*="lottieIcon_"]::after {
+        background-image: var(--pup-muted) !important;
+        scale: 1.3;
+    }
 }
 
 /* --- Наушники (вторая кнопка) --- */
-[class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-    > button [class*="lottieIcon_"] {
-    background-image: var(--pup-listening); /* cage2.png */
-    scale: 1.1;
-}
-
-/* Наушники выключены (Deafen) */
-[class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-    > button[aria-checked="true"] [class*="lottieIcon_"],
-[class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-    > button[aria-disabled="true"] [class*="lottieIcon_"],
-[class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-    > button[class*="redGlow"] [class*="lottieIcon_"] {
-    background-image: var(--pup-deafened) !important; /* cage.png */
+[class*="audioButtonParent_"] ~ [class*="audioButtonParent_"] > button {
+    /* Наушники включены */
+    &[aria-checked="false"] [class*="lottieIcon_"]::after {
+        background-image: var(--pup-listening);
+        scale: 1.1;
+    }
+    
+    /* Наушники выключены */
+    &[aria-checked="true"] [class*="lottieIcon_"]::after,
+    &[aria-disabled="true"] [class*="lottieIcon_"]::after,
+    &[class*="redGlow"] [class*="lottieIcon_"]::after {
+        background-image: var(--pup-deafened) !important;
+        scale: 1.1;
+    }
 }
 
 /* ==========================================================
-   2. OTHER PARTICIPANTS (voice channel sidebar & your own row)
+   2. OTHER PARTICIPANTS (sidebar & your own row)
    ========================================================== */
 
 /* Скрываем оригинальные пути внутри SVG */
@@ -79,18 +78,18 @@
     background: center / contain no-repeat;
 }
 
-/* 1-я иконка = микрофон заглушен (dog.png) */
+/* 1-я иконка = мьют */
 [class*="iconGroup__"] > svg[class*="icon__"]:nth-of-type(1) {
     background-image: var(--pup-muted);
 }
 
-/* 2-я иконка = выключен звук (cage.png) */
+/* 2-я иконка = выключен звук */
 [class*="iconGroup__"] > svg[class*="icon__"]:nth-of-type(2) {
     background-image: var(--pup-deafened);
 }
 
 /* ==========================================================
-   3. TOOLTIPS (local buttons)
+   3. TOOLTIPS
    ========================================================== */
 
 [class*="tooltip_"] div[data-text-variant="text-sm/medium"] {
@@ -98,32 +97,23 @@
     transition-delay: 180ms;
 }
 
-/* Замена текста тултипов */
-body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-        > button[aria-checked="true"]:hover),
-body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-        > button[aria-disabled="true"]:hover),
-body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-        > button[class*="redGlow"]:hover) { 
+body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *) > button[aria-checked="true"]:hover),
+body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *) > button[aria-disabled="true"]:hover),
+body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *) > button[class*="redGlow"]:hover) { 
     --pup-tooltip-text: "Muzzled"; 
 }
 
-body:has([class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-        > button[aria-checked="true"]:hover),
-body:has([class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-        > button[aria-disabled="true"]:hover),
-body:has([class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-        > button[class*="redGlow"]:hover) { 
+body:has([class*="audioButtonParent_"] ~ [class*="audioButtonParent_"] > button[aria-checked="true"]:hover),
+body:has([class*="audioButtonParent_"] ~ [class*="audioButtonParent_"] > button[aria-disabled="true"]:hover),
+body:has([class*="audioButtonParent_"] ~ [class*="audioButtonParent_"] > button[class*="redGlow"]:hover) { 
     --pup-tooltip-text: "Caged"; 
 }
 
-body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-        > button[aria-checked="false"]:hover) { 
+body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *) > button[aria-checked="false"]:hover) { 
     --pup-tooltip-text: "Bark!!"; 
 }
 
-body:has([class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-        > button[aria-checked="false"]:hover) { 
+body:has([class*="audioButtonParent_"] ~ [class*="audioButtonParent_"] > button[aria-checked="false"]:hover) { 
     --pup-tooltip-text: "Cage"; 
 }
 
