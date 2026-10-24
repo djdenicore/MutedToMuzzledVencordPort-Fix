@@ -155,7 +155,7 @@ body:has(
     :is(
         .container__37e49 [class*="buttons_"] > [class*="micButtonParent_"]:not([class*="micButtonParent_"] ~ *),
         .container__37e49 [class*="buttons_"] > [class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-    ) > button[aria-checked="false"]:hover
+    ) > button[aria-checked="false"]:not(:is([aria-disabled="true"], :disabled, [disabled], [data-disabled="true"], [class*="redGlow"], [class*="disabled"])):hover
 ) {
     --pup-tooltip-text: "Bark!!";
 }
@@ -173,7 +173,7 @@ body:has(
     :is(
         .container__37e49 [class*="buttons_"] > [class*="micButtonParent_"]:not(:has(~ [class*="micButtonParent_"])),
         .container__37e49 [class*="buttons_"] > [class*="audioButtonParent_"]:not(:has(~ [class*="audioButtonParent_"]))
-    ) > button[aria-checked="false"]:hover
+    ) > button[aria-checked="false"]:not(:is([aria-disabled="true"], :disabled, [disabled], [data-disabled="true"], [class*="redGlow"])):hover
 ) {
     --pup-tooltip-text: "Cage";
 }
