@@ -5,31 +5,35 @@
  */
 
 :root {
-    /* Microphone enabled. */
     --pup-mic-on: url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/bark.png");
-    /* Microphone muted or blocked, for any reason. */
     --pup-mic-muted: url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/dog.png");
-    /* Listening / headphones enabled. */
     --pup-listening: url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/cage2.png");
-    /* Deafened / headphones disabled. */
     --pup-deafened: url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/cage.png");
 }
 
 /*
  * 1. LOCAL VOICE CONTROLS
  *
- * Scope replacements to the user-panel button row. Do not style every
- * audioButtonParent globally: Discord uses additional voice/video controls
- * elsewhere, and their order can change when the camera is active.
+ * Identify controls by their accessible action label rather than their
+ * position in the button row. This prevents the camera button from being
+ * mistaken for the microphone/deafen button.
  *
- * Support both current micButtonParent and older audioButtonParent names.
+ * English and Russian labels are supported. The selectors are scoped to
+ * Discord's user-panel buttons, not buttons elsewhere in the client.
  */
 
-/* The first microphone control in the user panel. */
-:is(
-    .container__37e49 [class*="buttons_"] > [class*="micButtonParent_"]:not([class*="micButtonParent_"] ~ *),
-    .container__37e49 [class*="buttons_"] > [class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-) > button[role="switch"] {
+/* Microphone control: enabled = Bark; any muted/blocked state = Muzz. */
+[class*="panels_"] [class*="buttons_"] :is(
+    button[aria-label*="microphone" i],
+    button[aria-label*="mic" i],
+    button[aria-label*="микрофон" i],
+    button[aria-label*="mute" i]:not([aria-label*="deafen" i]):not([aria-label*="sound" i]):not([aria-label*="audio" i]),
+    button[aria-label*="permission" i],
+    button[aria-label*="denied" i],
+    button[aria-label*="speak" i],
+    button[aria-label*="говор" i],
+    button[aria-label*="запрещ" i]
+) {
     [class*="lottieIcon_"] > svg {
         display: none !important;
     }
@@ -43,16 +47,60 @@
         pointer-events: none;
     }
 
-    /* Unmuted mic = Bark. */
     &[aria-checked="false"] [class*="lottieIcon_"]::after {
         background-image: var(--pup-mic-on);
         scale: 1.3;
     }
 
-    /*
-     * Any blocked/muted state = Muzz. Keep this after the unmuted rule so
-     * a disabled button still shows Muzz even if aria-checked remains false.
-     */
+    &:is(
+        [aria-checked="true"],
+        [aria-disabled="true"],
+        :disabled,
+        [disabled],
+        [data-disabled="true"],
+        [class*="redGlow"],
+        [class*="disabled"],
+        [aria-label*="permission" i],
+        [aria-label*="denied" i],
+        [aria-label*="blocked" i],
+        [aria-label*="speak" i],
+        [aria-label*="говор" i],
+        [aria-label*="запрещ" i],
+        :has([class*="lottieIcon_"] svg path[d^="M21.76.83"])
+    ) [class*="lottieIcon_"]::after {
+        background-image: var(--pup-mic-muted) !important;
+        scale: 1.3;
+    }
+}
+
+/* Deafen/listening control: enabled = Cage; deafen active = Caged. */
+[class*="panels_"] [class*="buttons_"] :is(
+    button[aria-label*="deafen" i],
+    button[aria-label*="headphone" i],
+    button[aria-label*="sound" i],
+    button[aria-label*="audio" i],
+    button[aria-label*="наушник" i],
+    button[aria-label*="звук" i],
+    button[aria-label*="прослуш" i]
+) {
+    [class*="lottieIcon_"] > svg {
+        display: none !important;
+    }
+
+    [class*="lottieIcon_"]::after {
+        content: "";
+        display: block;
+        width: 21px;
+        height: 21px;
+        background: center / contain no-repeat;
+        pointer-events: none;
+    }
+
+    &[aria-checked="false"] [class*="lottieIcon_"]::after {
+        background-image: var(--pup-listening);
+        scale: 1.1;
+    }
+
     &:is(
         [aria-checked="true"],
         [aria-disabled="true"],
@@ -62,37 +110,6 @@
         [class*="redGlow"],
         [class*="disabled"]
     ) [class*="lottieIcon_"]::after {
-        background-image: var(--pup-mic-muted) !important;
-        scale: 1.3;
-    }
-}
-
-/* The last microphone-parent control is the deafen/headphones control. */
-:is(
-    .container__37e49 [class*="buttons_"] > [class*="micButtonParent_"]:not(:has(~ [class*="micButtonParent_"])),
-    .container__37e49 [class*="buttons_"] > [class*="audioButtonParent_"]:not(:has(~ [class*="audioButtonParent_"]))
-) > button[role="switch"] {
-    [class*="lottieIcon_"] > svg {
-        display: none !important;
-    }
-
-    [class*="lottieIcon_"]::after {
-        content: "";
-        display: block;
-        width: 21px;
-        height: 21px;
-        background: center / contain no-repeat;
-        pointer-events: none;
-    }
-
-    /* Listening enabled = open cage. */
-    &[aria-checked="false"] [class*="lottieIcon_"]::after {
-        background-image: var(--pup-listening);
-        scale: 1.1;
-    }
-
-    /* Deafen enabled = closed cage. */
-    &:is([aria-checked="true"], [aria-disabled="true"], :disabled, [disabled], [data-disabled="true"], [class*="redGlow"]) [class*="lottieIcon_"]::after {
         background-image: var(--pup-deafened) !important;
         scale: 1.1;
     }
@@ -101,11 +118,11 @@
 /*
  * 2. PARTICIPANT STATUS ICONS
  *
- * Both regular self-mute and server/permission mute are microphone states,
- * so both use Muzz. The crossed-out headset is separate and uses Caged.
+ * Microphone muted by the user, server, or channel permissions = Muzz.
+ * Sound/deafen disabled = Caged. These are separate SVG paths.
  */
 
-/* Server-muted / permission-blocked microphone. */
+/* Server mute / microphone denied. */
 [class*="iconGroup_"] > svg[class*="icon_"]:has(path[d^="M21.76.83"]) > path {
     display: none !important;
 }
@@ -114,7 +131,7 @@
     background: var(--pup-mic-muted) center / contain no-repeat;
 }
 
-/* User muted their own microphone. */
+/* Self-muted microphone. */
 [class*="iconGroup_"] > svg[class*="icon_"]:has(path[d^="m2.7 22.7"]) > path {
     display: none !important;
 }
@@ -123,7 +140,7 @@
     background: var(--pup-mic-muted) center / contain no-repeat;
 }
 
-/* Deafened / listening disabled: crossed-out headset, not microphone. */
+/* Deafened / sound disabled: crossed-out headset. */
 [class*="iconGroup_"] > svg[class*="icon_"]:has(path[d^="M22.7 2.7"]) > path {
     display: none !important;
 }
@@ -134,7 +151,7 @@
 
 /*
  * 3. VOICE-CONTROL TOOLTIPS
- * Only replace tooltips for the two voice controls, not camera/other buttons.
+ * Keep the tooltip wording consistent with the icon on each actual control.
  */
 
 [class*="tooltip_"] div[data-text-variant="text-sm/medium"] {
@@ -142,48 +159,85 @@
     transition-delay: 180ms;
 }
 
+/* Muted/blocked microphone = Muzzled. */
 body:has(
-    :is(
-        .container__37e49 [class*="buttons_"] > [class*="micButtonParent_"]:not([class*="micButtonParent_"] ~ *),
-        .container__37e49 [class*="buttons_"] > [class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-    ) > button:is([aria-checked="true"], [aria-disabled="true"], :disabled, [disabled], [data-disabled="true"], [class*="redGlow"], [class*="disabled"]):hover
+    [class*="panels_"] [class*="buttons_"] :is(
+        button[aria-label*="microphone" i],
+        button[aria-label*="mic" i],
+        button[aria-label*="микрофон" i],
+        button[aria-label*="mute" i]:not([aria-label*="deafen" i]):not([aria-label*="sound" i]):not([aria-label*="audio" i]),
+        button[aria-label*="permission" i],
+        button[aria-label*="denied" i],
+        button[aria-label*="speak" i],
+        button[aria-label*="говор" i],
+        button[aria-label*="запрещ" i]
+    ):is([aria-checked="true"], [aria-disabled="true"], :disabled, [disabled], [data-disabled="true"], [class*="redGlow"], [class*="disabled"], [aria-label*="permission" i], [aria-label*="denied" i], [aria-label*="blocked" i], [aria-label*="speak" i], [aria-label*="говор" i], [aria-label*="запрещ" i]):hover
 ) {
     --pup-tooltip-text: "Muzzled";
 }
 
+/* Enabled microphone = Bark!! */
 body:has(
-    :is(
-        .container__37e49 [class*="buttons_"] > [class*="micButtonParent_"]:not([class*="micButtonParent_"] ~ *),
-        .container__37e49 [class*="buttons_"] > [class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-    ) > button[aria-checked="false"]:not(:is([aria-disabled="true"], :disabled, [disabled], [data-disabled="true"], [class*="redGlow"], [class*="disabled"])):hover
+    [class*="panels_"] [class*="buttons_"] :is(
+        button[aria-label*="microphone" i],
+        button[aria-label*="mic" i],
+        button[aria-label*="микрофон" i],
+        button[aria-label*="mute" i]:not([aria-label*="deafen" i]):not([aria-label*="sound" i]):not([aria-label*="audio" i])
+    )[aria-checked="false"]:not(:is([aria-disabled="true"], :disabled, [disabled], [data-disabled="true"], [class*="redGlow"], [class*="disabled"])):hover
 ) {
     --pup-tooltip-text: "Bark!!";
 }
 
+/* Deafened / sound disabled = Caged. */
 body:has(
-    :is(
-        .container__37e49 [class*="buttons_"] > [class*="micButtonParent_"]:not(:has(~ [class*="micButtonParent_"])),
-        .container__37e49 [class*="buttons_"] > [class*="audioButtonParent_"]:not(:has(~ [class*="audioButtonParent_"]))
-    ) > button:is([aria-checked="true"], [aria-disabled="true"], :disabled, [disabled], [data-disabled="true"], [class*="redGlow"]):hover
+    [class*="panels_"] [class*="buttons_"] :is(
+        button[aria-label*="deafen" i],
+        button[aria-label*="headphone" i],
+        button[aria-label*="sound" i],
+        button[aria-label*="audio" i],
+        button[aria-label*="наушник" i],
+        button[aria-label*="звук" i],
+        button[aria-label*="прослуш" i]
+    ):is([aria-checked="true"], [aria-disabled="true"], :disabled, [disabled], [data-disabled="true"], [class*="redGlow"], [class*="disabled"]):hover
 ) {
     --pup-tooltip-text: "Caged";
 }
 
+/* Listening enabled = Cage. */
 body:has(
-    :is(
-        .container__37e49 [class*="buttons_"] > [class*="micButtonParent_"]:not(:has(~ [class*="micButtonParent_"])),
-        .container__37e49 [class*="buttons_"] > [class*="audioButtonParent_"]:not(:has(~ [class*="audioButtonParent_"]))
-    ) > button[aria-checked="false"]:not(:is([aria-disabled="true"], :disabled, [disabled], [data-disabled="true"], [class*="redGlow"])):hover
+    [class*="panels_"] [class*="buttons_"] :is(
+        button[aria-label*="deafen" i],
+        button[aria-label*="headphone" i],
+        button[aria-label*="sound" i],
+        button[aria-label*="audio" i],
+        button[aria-label*="наушник" i],
+        button[aria-label*="звук" i],
+        button[aria-label*="прослуш" i]
+    )[aria-checked="false"]:not(:is([aria-disabled="true"], :disabled, [disabled], [data-disabled="true"], [class*="redGlow"], [class*="disabled"])):hover
 ) {
     --pup-tooltip-text: "Cage";
 }
 
-/* Replace localized label text while hovering an actual voice control. */
+/* Replace localized tooltip text only while hovering a matched voice control. */
 body:has(
-    :is(
-        .container__37e49 [class*="buttons_"] > [class*="micButtonParent_"],
-        .container__37e49 [class*="buttons_"] > [class*="audioButtonParent_"]
-    ) > button:hover
+    [class*="panels_"] [class*="buttons_"] :is(
+        button[aria-label*="microphone" i],
+        button[aria-label*="mic" i],
+        button[aria-label*="микрофон" i],
+        button[aria-label*="mute" i]:not([aria-label*="deafen" i]):not([aria-label*="sound" i]):not([aria-label*="audio" i]),
+        button[aria-label*="permission" i],
+        button[aria-label*="denied" i],
+        button[aria-label*="speak" i],
+        button[aria-label*="говор" i],
+        button[aria-label*="запрещ" i],
+        button[aria-label*="deafen" i],
+        button[aria-label*="headphone" i],
+        button[aria-label*="sound" i],
+        button[aria-label*="audio" i],
+        button[aria-label*="наушник" i],
+        button[aria-label*="звук" i],
+        button[aria-label*="прослуш" i]
+    ):hover
 ) {
     [class*="tooltip_"] div[data-text-variant="text-sm/medium"] {
         font-size: 0 !important;
