@@ -1,115 +1,100 @@
 /**
- * @name PupCord(fix)
+ * @name PupCord
  * @description Makes discord more puppy.
  * @credits Original BetterDiscord plugin by 1xzozz
  */
-
-/* ==========================================================
-   Assets
-   ========================================================== */
 
 :root {
     --pup-speaking:  url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/bark.png");
     --pup-muted:     url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/dog.png");
     --pup-listening: url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/cage2.png");
     --pup-deafened:  url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/cage.png");
-
-    --pup-size-local: 21px;
-    --pup-size-user:  14px;
-    --pup-size-call:  20px;
 }
 
 /* ==========================================================
-   1. Local buttons (bottom-left panel)
+   1. Local buttons
    ========================================================== */
 
-/* Hide default lottie SVG */
-[class*="audioButtonParent_"] > button[role="switch"] [class*="lottieIcon_"] > svg,
-button[role="switch"][class*="redGlow"] [class*="lottieIcon_"] > svg {
+[class*="audioButtonParent_"] > button[role="switch"] [class*="lottieIcon_"] > svg {
     display: none;
 }
 
-/* Base custom icon */
-[class*="audioButtonParent_"] > button[role="switch"] [class*="lottieIcon_"]::after,
-button[role="switch"][class*="redGlow"] [class*="lottieIcon_"]::after {
+[class*="audioButtonParent_"] > button[role="switch"] [class*="lottieIcon_"]::after {
     content: "";
     display: block;
-    width:  var(--pup-size-local);
-    height: var(--pup-size-local);
-    background: center / contain no-repeat;
+    width: 21px;
+    height: 21px;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
-/* ---- Microphone ---- */
+/* --- Microphone = first audioButtonParent --- */
 [class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
     > button[role="switch"] {
-    &[aria-checked="false"] [class*="lottieIcon_"]::after {   /* unmuted → can bark */
+    &[aria-checked="false"] [class*="lottieIcon_"]::after {
         scale: 1.3;
-        background-image: var(--pup-speaking);
+        background-image: var(--pup-speaking);   /* bark.png — can bark */
     }
-    &[aria-checked="true"] [class*="lottieIcon_"]::after {    /* muted */
+    &[aria-checked="true"] [class*="lottieIcon_"]::after {
         scale: 1.3;
-        background-image: var(--pup-muted);
+        background-image: var(--pup-muted);      /* dog.png — muted */
     }
 }
 
-/* ---- Deafen ---- */
-[class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-    > button[role="switch"],
-button[role="switch"][class*="redGlow"] {
-    &[aria-checked="false"] [class*="lottieIcon_"]::after {   /* not deafened → listening */
+/* --- Headphones = 2nd audioButtonParent --- */
+[class*="buttons_"] > [class*="audioButtonParent_"]:nth-child(2)
+    > button[role="switch"] {
+    &[aria-checked="false"] [class*="lottieIcon_"]::after {
         scale: 1.1;
-        background-image: var(--pup-listening);
+        background-image: var(--pup-listening); /* cage2.png — can hear */
     }
-    &[aria-checked="true"] [class*="lottieIcon_"]::after {    /* deafened */
+    &[aria-checked="true"] [class*="lottieIcon_"]::after {
         scale: 1.1;
-        background-image: var(--pup-deafened);
+        background-image: var(--pup-deafened);  /* cage.png — deafened */
     }
 }
 
 /* ==========================================================
-   2. Other participants — voice channel sidebar
+   2. Other participants — sidebar (voice channel members)
    ========================================================== */
 
-/* --- Mute / Deafen status icons --- */
-
 /* Hide default SVGs */
-[class*="voiceUser"] [class*="icons"] > [class*="iconWrapper"] > svg {
+[class*="voiceUser"] [class*="iconWrapper"] > svg,
+[class*="voiceUser"] [class*="voiceIcons"] > * > svg {
     display: none;
 }
 
 /* Base custom icon */
-[class*="voiceUser"] [class*="icons"] > [class*="iconWrapper"]::after {
+[class*="voiceUser"] [class*="iconWrapper"]::after,
+[class*="voiceUser"] [class*="voiceIcons"] > *::after {
     content: "";
     display: block;
-    width:  var(--pup-size-user);
-    height: var(--pup-size-user);
+    width: 14px;
+    height: 14px;
     background: center / contain no-repeat;
 }
 
-/* First icon = microphone (muted) */
-[class*="voiceUser"] [class*="icons"] > [class*="iconWrapper"]:nth-child(1)::after {
+/* 1st icon = mic muted */
+[class*="voiceUser"] [class*="iconWrapper"]:nth-child(1)::after,
+[class*="voiceUser"] [class*="voiceIcons"] > *:nth-child(1)::after {
     background-image: var(--pup-muted);
 }
 
-/* Second icon = headphones (deafened) */
-[class*="voiceUser"] [class*="icons"] > [class*="iconWrapper"]:nth-child(2)::after {
+/* 2nd icon = deafened */
+[class*="voiceUser"] [class*="iconWrapper"]:nth-child(2)::after,
+[class*="voiceUser"] [class*="voiceIcons"] > *:nth-child(2)::after {
     background-image: var(--pup-deafened);
 }
 
-/* If a single icon is shown and it's headphones (deafen also auto-mutes) */
-[class*="voiceUser"] [class*="icons"] > [class*="iconWrapper"]:only-child::after {
-    background-image: var(--pup-deafened);
-}
-
-/* --- Speaking state → bark.png overlay --- */
-
+/* --- Speaking → bark.png overlay on avatar --- */
 [class*="voiceUser"] [class*="avatarSpeaking"],
-[class*="voiceUser"] [class*="avatar"][class*="speaking"] {
+[class*="voiceUser"] [class*="speaking"] [class*="avatar"] {
     position: relative;
 }
 
 [class*="voiceUser"] [class*="avatarSpeaking"]::after,
-[class*="voiceUser"] [class*="avatar"][class*="speaking"]::after {
+[class*="voiceUser"] [class*="speaking"] [class*="avatar"]::after {
     content: "";
     position: absolute;
     inset: -2px;
@@ -118,31 +103,17 @@ button[role="switch"][class*="redGlow"] {
     z-index: 1;
 }
 
-/* (opt-in) Passive "listening" badge — раскомментируй, если хочешь
-   показывать cage2.png на всех молчащих участниках канала */
-/*
-[class*="voiceUser"] [class*="avatar"]:not([class*="speaking"])::before {
-    content: "";
-    position: absolute;
-    inset: 60%;
-    background: var(--pup-listening) center / contain no-repeat;
-    opacity: .5;
-    pointer-events: none;
-}
-*/
-
 /* ==========================================================
-   3. Other participants — full call view (large tiles)
+   3. Other participants — full call view
    ========================================================== */
 
-/* Speaking state */
 [class*="callContainer"] [class*="avatarSpeaking"],
-[class*="videoWrapper"] [class*="avatarSpeaking"] {
+[class*="videoWrapper"]  [class*="avatarSpeaking"] {
     position: relative;
 }
 
 [class*="callContainer"] [class*="avatarSpeaking"]::after,
-[class*="videoWrapper"] [class*="avatarSpeaking"]::after {
+[class*="videoWrapper"]  [class*="avatarSpeaking"]::after {
     content: "";
     position: absolute;
     inset: 0;
@@ -152,94 +123,26 @@ button[role="switch"][class*="redGlow"] {
 }
 
 /* Mute / deafen icons in call tiles */
-[class*="callContainer"] [class*="icons"] > [class*="iconWrapper"] > svg,
-[class*="videoWrapper"]  [class*="icons"] > [class*="iconWrapper"] > svg {
+[class*="callContainer"] [class*="icons"] [class*="iconWrapper"] > svg,
+[class*="videoWrapper"]  [class*="icons"] [class*="iconWrapper"] > svg {
     display: none;
 }
 
-[class*="callContainer"] [class*="icons"] > [class*="iconWrapper"]::after,
-[class*="videoWrapper"]  [class*="icons"] > [class*="iconWrapper"]::after {
+[class*="callContainer"] [class*="icons"] [class*="iconWrapper"]::after,
+[class*="videoWrapper"]  [class*="icons"] [class*="iconWrapper"]::after {
     content: "";
     display: block;
-    width:  var(--pup-size-call);
-    height: var(--pup-size-call);
+    width: 20px;
+    height: 20px;
     background: center / contain no-repeat;
 }
 
-[class*="callContainer"] [class*="icons"] > [class*="iconWrapper"]:nth-child(1)::after,
-[class*="videoWrapper"]  [class*="icons"] > [class*="iconWrapper"]:nth-child(1)::after {
+[class*="callContainer"] [class*="icons"] [class*="iconWrapper"]:nth-child(1)::after,
+[class*="videoWrapper"]  [class*="icons"] [class*="iconWrapper"]:nth-child(1)::after {
     background-image: var(--pup-muted);
 }
 
-[class*="callContainer"] [class*="icons"] > [class*="iconWrapper"]:nth-child(2)::after,
-[class*="videoWrapper"]  [class*="icons"] > [class*="iconWrapper"]:nth-child(2)::after {
+[class*="callContainer"] [class*="icons"] [class*="iconWrapper"]:nth-child(2)::after,
+[class*="videoWrapper"]  [class*="icons"] [class*="iconWrapper"]:nth-child(2)::after {
     background-image: var(--pup-deafened);
-}
-
-/* ==========================================================
-   4. Tooltips (local buttons)
-   ========================================================== */
-
-[class*="tooltip_"] div[data-text-variant="text-sm/medium"] {
-    transition: font-size 0s;
-    transition-delay: 180ms;
-}
-
-body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-        > button[role="switch"][aria-checked="true"]:hover) {
-    --pup-tooltip-text: "Muzzled";
-}
-body:has([class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-        > button[role="switch"][aria-checked="true"]:hover) {
-    --pup-tooltip-text: "Caged";
-}
-body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-        > button[role="switch"][aria-checked="false"]:hover) {
-    --pup-tooltip-text: "Bark!!";
-}
-body:has([class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-        > button[role="switch"][aria-checked="false"]:hover) {
-    --pup-tooltip-text: "Cage";
-}
-
-body:has([class*="audioButtonParent_"] > button[role="switch"]:hover) {
-    [class*="tooltip_"] div[data-text-variant="text-sm/medium"] {
-        font-size: 0 !important;
-        line-height: 18px !important;
-        transition-delay: 0s;
-
-        &::after {
-            content: var(--pup-tooltip-text, "");
-            display: inline;
-            font-size: 14px;
-            line-height: 18px;
-        }
-    }
-}
-
-/* ==========================================================
-   5. Typing indicator
-   ========================================================== */
-
-[class*="typingDots"] > [class*="ellipsis"] + [class*="text"] {
-    font-size: 0;
-    height: 16px;
-
-    > strong {
-        font-size: 12px;
-
-        &::after {
-            color: var(--text-subtle);
-            font-weight: 500;
-        }
-        &:last-child::after                  { content: " is barking!!!"; }
-        &:last-child:not(:first-child)::after { content: " are barking!!!"; }
-        &:nth-last-child(2)::after            { content: " and "; }
-        &:nth-last-child(3)::after            { content: ", "; }
-    }
-
-    &:not(:has(> strong))::after {
-        font-size: 12px;
-        content: "Lots of barking...";
-    }
 }
