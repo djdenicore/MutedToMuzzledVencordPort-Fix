@@ -44,6 +44,9 @@
     /* Muted, server-muted, or otherwise blocked. */
     &[aria-checked="true"] [class*="lottieIcon_"]::after,
     &[aria-disabled="true"] [class*="lottieIcon_"]::after,
+    &:disabled [class*="lottieIcon_"]::after,
+    &[disabled] [class*="lottieIcon_"]::after,
+    &[data-disabled="true"] [class*="lottieIcon_"]::after,
     &[class*="redGlow"] [class*="lottieIcon_"]::after {
         background-image: var(--pup-muted) !important;
         scale: 1.3;
@@ -69,21 +72,35 @@
    2. PARTICIPANT MUTE / DEAFEN ICONS
    ========================================================== */
 
-/* The mic icon is identified by its SVG path. */
+/*
+ * Discord uses different SVG paths for server-muted and self-muted
+ * microphones. Both should use the Muzz icon.
+ */
+
+/* Server mute / permission-enforced mute. */
 [class*="iconGroup_"] > svg[class*="icon_"]:has(path[d^="M21.76"]) > path {
-    display: none;
+    display: none !important;
 }
 
 [class*="iconGroup_"] > svg[class*="icon_"]:has(path[d^="M21.76"]) {
     background: var(--pup-muted) center / contain no-repeat;
 }
 
-/* The headphone icon is identified by its SVG path. */
+/* Regular self-mute: crossed-out microphone, not a headphone icon. */
 [class*="iconGroup_"] > svg[class*="icon_"]:has(path[d^="m2.7 22.7"]) > path {
-    display: none;
+    display: none !important;
 }
 
 [class*="iconGroup_"] > svg[class*="icon_"]:has(path[d^="m2.7 22.7"]) {
+    background: var(--pup-muted) center / contain no-repeat;
+}
+
+/* Deafened / listening-disabled: crossed-out headset. */
+[class*="iconGroup_"] > svg[class*="icon_"]:has(path[d^="M22.7 2.7"]) > path {
+    display: none !important;
+}
+
+[class*="iconGroup_"] > svg[class*="icon_"]:has(path[d^="M22.7 2.7"]) {
     background: var(--pup-deafened) center / contain no-repeat;
 }
 
@@ -98,6 +115,9 @@
 
 body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *) > button[aria-checked="true"]:hover),
 body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *) > button[aria-disabled="true"]:hover),
+body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *) > button:disabled:hover),
+body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *) > button[disabled]:hover),
+body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *) > button[data-disabled="true"]:hover),
 body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *) > button[class*="redGlow"]:hover) {
     --pup-tooltip-text: "Muzzled";
 }
