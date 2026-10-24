@@ -1,32 +1,27 @@
 /**
  * @name PupCord
- * @description Makes discord more puppy.
  * @credits Original BetterDiscord plugin by 1xzozz
  */
 
 :root {
-    /* bark.png     — speaking / mic ON         */
-    --pup-speaking:  url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/bark.png");
-    /* dog.png      — muted / mic OFF           */
-    --pup-muted:     url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/dog.png");
-    /* cage2.png    — listening / headphones ON */
-    --pup-listening: url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/cage2.png");
-    /* cage.png     — deafened / headphones OFF */
-    --pup-deafened:  url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/cage.png");
+    --pup-speaking:  url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/bark.png");    /* mic ON / speaking */
+    --pup-muted:     url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/dog.png");     /* mic OFF */
+    --pup-listening: url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/cage2.png");   /* headphones ON */
+    --pup-deafened:  url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/cage.png");    /* headphones OFF */
 }
 
 /* ==========================================================
-   1. LOCAL BUTTONS (bottom-left bar)
+   LOCAL BUTTONS (bottom-left bar)
    ========================================================== */
 
 /* Скрываем ВСЕ оригинальные иконки (SVG и Lottie) внутри кнопок */
-[class*="audioButtonParent_"] button svg,
-[class*="audioButtonParent_"] button [class*="lottieIcon_"] > svg {
+[class*="audioButtonParent_"] button[role="switch"] svg,
+[class*="audioButtonParent_"] button[role="switch"] [class*="lottieIcon_"] > svg {
     display: none !important;
 }
 
-/* Базовый слой для нашей картинки (вешаем на ::after самой кнопки) */
-[class*="audioButtonParent_"] button:nth-child(1)::after {
+/* Базовый слой для нашей картинки (вешаем прямо на кнопку) */
+[class*="audioButtonParent_"] button[role="switch"]::after {
     content: "";
     display: block;
     width: 21px;
@@ -37,40 +32,36 @@
 
 /* --- Микрофон (первая кнопка) --- */
 [class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-    > button:nth-child(1)::after {
-    background-image: var(--pup-speaking); /* bark.png */
-    scale: 1.3;
-}
-
-/* Микрофон выключен / запрещен (dog.png) */
-[class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-    > button:nth-child(1)[aria-checked="true"]::after,
-[class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-    > button:nth-child(1)[aria-disabled="true"]::after,
-[class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-    > button:nth-child(1)[class*="redGlow"]::after {
-    background-image: var(--pup-muted) !important; /* dog.png */
+    > button[role="switch"] {
+    /* Mic OFF (Заглушен) - dog.png */
+    &[aria-checked="true"]::after {
+        background-image: var(--pup-muted);
+        scale: 1.3;
+    }
+    /* Mic ON (Можно говорить) - bark.png */
+    &[aria-checked="false"]::after {
+        background-image: var(--pup-speaking);
+        scale: 1.3;
+    }
 }
 
 /* --- Наушники (вторая кнопка) --- */
 [class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-    > button:nth-child(1)::after {
-    background-image: var(--pup-listening); /* cage2.png */
-    scale: 1.1;
-}
-
-/* Наушники выключены (cage.png) */
-[class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-    > button:nth-child(1)[aria-checked="true"]::after,
-[class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-    > button:nth-child(1)[aria-disabled="true"]::after,
-[class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-    > button:nth-child(1)[class*="redGlow"]::after {
-    background-image: var(--pup-deafened) !important; /* cage.png */
+    > button[role="switch"] {
+    /* Deafen OFF (Слушаем) - cage2.png */
+    &[aria-checked="false"]::after {
+        background-image: var(--pup-listening);
+        scale: 1.1;
+    }
+    /* Deafen ON (Звук выключен) - cage.png */
+    &[aria-checked="true"]::after {
+        background-image: var(--pup-deafened);
+        scale: 1.1;
+    }
 }
 
 /* ==========================================================
-   2. OTHER PARTICIPANTS (voice channel sidebar & your own row)
+   OTHER PARTICIPANTS (sidebar)
    ========================================================== */
 
 /* Скрываем оригинальные пути внутри SVG */
@@ -83,7 +74,7 @@
     background: center / contain no-repeat;
 }
 
-/* 1-я иконка = микрофон заглушен (dog.png) */
+/* 1-я иконка = мьют (dog.png) */
 [class*="iconGroup__"] > svg[class*="icon__"]:nth-of-type(1) {
     background-image: var(--pup-muted);
 }
@@ -94,7 +85,7 @@
 }
 
 /* ==========================================================
-   3. TOOLTIPS (local buttons)
+   TOOLTIPS
    ========================================================== */
 
 [class*="tooltip_"] div[data-text-variant="text-sm/medium"] {
@@ -102,32 +93,16 @@
     transition-delay: 180ms;
 }
 
-/* Замена текста тултипов в зависимости от состояния */
 body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-        > button:nth-child(1)[aria-checked="true"]:hover),
+        > button[role="switch"][aria-checked="true"]:hover) { --pup-tooltip-text: "Muzzled"; }
+body:has([class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
+        > button[role="switch"][aria-checked="true"]:hover) { --pup-tooltip-text: "Caged"; }
 body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-        > button:nth-child(1)[aria-disabled="true"]:hover) { 
-    --pup-tooltip-text: "Muzzled"; 
-}
-
+        > button[role="switch"][aria-checked="false"]:hover) { --pup-tooltip-text: "Bark!!"; }
 body:has([class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-        > button:nth-child(1)[aria-checked="true"]:hover),
-body:has([class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-        > button:nth-child(1)[aria-disabled="true"]:hover) { 
-    --pup-tooltip-text: "Caged"; 
-}
+        > button[role="switch"][aria-checked="false"]:hover) { --pup-tooltip-text: "Cage"; }
 
-body:has([class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-        > button:nth-child(1)[aria-checked="false"]:hover) { 
-    --pup-tooltip-text: "Bark!!"; 
-}
-
-body:has([class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-        > button:nth-child(1)[aria-checked="false"]:hover) { 
-    --pup-tooltip-text: "Cage"; 
-}
-
-body:has([class*="audioButtonParent_"] > button:nth-child(1):hover) {
+body:has([class*="audioButtonParent_"] > button[role="switch"]:hover) {
     [class*="tooltip_"] div[data-text-variant="text-sm/medium"] {
         font-size: 0 !important;
         line-height: 18px !important;
@@ -142,7 +117,7 @@ body:has([class*="audioButtonParent_"] > button:nth-child(1):hover) {
 }
 
 /* ==========================================================
-   4. TYPING INDICATOR
+   TYPING INDICATOR
    ========================================================== */
 
 [class*="typingDots"] > [class*="ellipsis"] + [class*="text"] {
