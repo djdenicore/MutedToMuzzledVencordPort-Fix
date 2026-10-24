@@ -13,4 +13,4 @@ Vencord QuickCSS snippet: replaces Discord's mic / headphone icons with puppy-th
 Paste this at the very top of your QuickCSS:
 
 ```css
-@import url("https://raw.githubusercontent.com/djdenicore/MutedToMuzzledVencordPort-Fix-/master/MutedToMuzzled.css");
+@import url("https://raw.githubusercontent.com/djdenicore/MutedToMuzzledVencordPort-Fix/master/MutedToMuzzled.css");
