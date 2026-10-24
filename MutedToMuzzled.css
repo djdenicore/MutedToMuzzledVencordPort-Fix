@@ -116,6 +116,25 @@
 }
 
 /*
+ * Explicit server-mute / Speak-permission block override for the local panel.
+ * Discord can show this blocked-microphone SVG without a reliable checked or
+ * disabled state, so key off the icon itself and force Muzz.
+ */
+[class*="panels_"] [class*="buttons_"] button:has([class*="lottieIcon_"] svg path[d^="M21.76.83"]) [class*="lottieIcon_"] > svg {
+    display: none !important;
+}
+
+[class*="panels_"] [class*="buttons_"] button:has([class*="lottieIcon_"] svg path[d^="M21.76.83"]) [class*="lottieIcon_"]::after {
+    content: "";
+    display: block;
+    width: 21px;
+    height: 21px;
+    background: var(--pup-mic-muted) center / contain no-repeat !important;
+    scale: 1.3;
+    pointer-events: none;
+}
+
+/*
  * 2. PARTICIPANT STATUS ICONS
  *
  * Microphone muted by the user, server, or channel permissions = Muzz.
