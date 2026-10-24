@@ -1,35 +1,35 @@
 # MutedToMuzzled (PupCord)
 
-A Vencord **QuickCSS stylesheet**, not a standalone Vencord plugin. It adds puppy-themed icons and wording to Discord's voice controls.
+A Vencord **QuickCSS stylesheet**, not a standalone Vencord plugin. It replaces Discord's voice-control icons and wording with puppy-themed assets.
 
-## What it changes
+## Icon mapping
 
-- **Microphone button:** shows `bark.png` when the mic is enabled and `dog.png` when muted or blocked.
-- **Headphones button:** shows `cage2.png` while listening and `cage.png` while deafened.
-- **Participant state icons:** replaces the microphone-muted and deafened icons where Discord displays them in voice channels.
-- **Tooltips:** uses `Bark!!`, `Muzzled`, `Cage`, and `Caged`, regardless of Discord's UI language.
-- **Typing indicator:** changes typing text to barking-themed wording.
+- **Microphone enabled:** `bark.png`
+- **Microphone muted, server-muted, or blocked by channel permissions:** `dog.png` (Muzz)
+- **Listening / headphones enabled:** `cage2.png` (open cage)
+- **Deafen enabled:** `cage.png` (closed cage)
+- **Participant status icons:** applies Muzz to regular microphone mute and server/permission mute; applies the closed cage only to the crossed-out headset icon.
+- **Tooltips:** `Bark!!`, `Muzzled`, `Cage`, and `Caged`.
+- **Typing indicator:** uses barking-themed wording.
 
-The microphone icon indicates whether the mic is enabled; it does not detect when someone is actively speaking.
+The local button selectors are scoped to the user-panel voice controls instead of every matching button across Discord. This helps avoid changing camera or call controls when the webcam is enabled. Discord's markup can still change between releases.
 
 ## Install
 
-1. Open **Discord Settings → Vencord → Themes → Edit QuickCSS**. The exact menu wording can vary by Vencord version.
-2. Add this line at the very top of your QuickCSS file:
+1. Open **Discord Settings → Vencord → Themes → Edit QuickCSS**.
+2. Put this import at the very top of your QuickCSS file:
 
    ```css
    @import url("https://raw.githubusercontent.com/djdenicore/MutedToMuzzledVencordPort-Fix/master/MutedToMuzzled.css");
    ```
 
-3. Save the file. If the changes do not appear, make sure **Enable Custom CSS** is enabled in Vencord settings and reload Discord.
-
-You can open the [raw stylesheet](https://raw.githubusercontent.com/djdenicore/MutedToMuzzledVencordPort-Fix/master/MutedToMuzzled.css) to confirm that the import URL loads plain CSS.
+3. Save the file and reload Discord if the changes are not visible.
 
 ## Compatibility notes
 
-- The stylesheet uses modern CSS features, including `:has()` and CSS nesting, so it requires a reasonably recent Discord/Vencord build.
-- Discord's generated class names and inline SVG paths can change after Discord updates. If an icon stops being replaced, those selectors may need updating.
-- The image files are loaded from the public [zoez22/muzzlemute repository](https://github.com/zoez22/muzzlemute).
+- Uses modern CSS features, including `:has()`, `:is()`, and CSS nesting.
+- Discord class names and SVG paths may change after updates. If a particular status icon stops being replaced, the relevant selector may need updating.
+- Icon assets are hosted in the public [zoez22/muzzlemute repository](https://github.com/zoez22/muzzlemute).
 
 ## Credits
 
