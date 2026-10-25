@@ -66,27 +66,32 @@
    2. PARTICIPANT STATUS ICONS (sidebar)
    ========================================================== */
 
+/*
+ * Keep the three status shapes separate. The mic-blocked/server-mute
+ * path must never be styled by the headset/deafen rule.
+ */
+
 /* Server-muted / blocked microphone. */
-[class*="iconGroup__"] > svg[class*="icon__"]:has(path[d*="M21.76"]) > path {
+[class*="iconGroup__"] > svg[class*="icon__"]:has(> path[d^="M21.76"]) > path {
     display: none !important;
 }
-[class*="iconGroup__"] > svg[class*="icon__"]:has(path[d*="M21.76"]) {
+[class*="iconGroup__"] > svg[class*="icon__"]:has(> path[d^="M21.76"]) {
     background: var(--pup-muted) center / contain no-repeat !important;
 }
 
-/* Self-muted microphone: this path is a mic status, NOT a deafen status. */
-[class*="iconGroup__"] > svg[class*="icon__"]:has(path[d*="m2.7 22.7"]) > path {
+/* Self-muted microphone. */
+[class*="iconGroup__"] > svg[class*="icon__"]:has(> path[d^="m2.7 22.7"]) > path {
     display: none !important;
 }
-[class*="iconGroup__"] > svg[class*="icon__"]:has(path[d*="m2.7 22.7"]) {
+[class*="iconGroup__"] > svg[class*="icon__"]:has(> path[d^="m2.7 22.7"]) {
     background: var(--pup-muted) center / contain no-repeat !important;
 }
 
-/* Deafened / sound disabled: crossed-out headset. */
-[class*="iconGroup__"] > svg[class*="icon__"]:has(path[d*="M22.7 2.7"]) > path {
+/* Deafened headset only. Use the specific headset path prefix. */
+[class*="iconGroup__"] > svg[class*="icon__"]:has(> path[d^="M22.7 2.7"]) > path {
     display: none !important;
 }
-[class*="iconGroup__"] > svg[class*="icon__"]:has(path[d*="M22.7 2.7"]) {
+[class*="iconGroup__"] > svg[class*="icon__"]:has(> path[d^="M22.7 2.7"]) {
     background: var(--pup-deafened) center / contain no-repeat !important;
 }
 
