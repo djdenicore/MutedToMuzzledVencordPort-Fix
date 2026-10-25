@@ -5,24 +5,23 @@
  */
 
 :root {
-    --pup-mic-on: url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/bark.png");
-    --pup-mic-muted: url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/dog.png");
+    --pup-speaking:  url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/bark.png");
+    --pup-muted:     url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/dog.png");
     --pup-listening: url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/cage2.png");
-    --pup-deafened: url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/cage.png");
+    --pup-deafened:  url("https://raw.githubusercontent.com/zoez22/muzzlemute/refs/heads/main/cage.png");
 }
 
-/*
- * 1. LOCAL VOICE CONTROLS
- * Use the known-working audioButtonParent_ + role="switch" selectors.
- */
+/* ==========================================================
+   1. LOCAL VOICE CONTROLS (bottom-left bar)
+   ========================================================== */
 
-/* Hide Discord's original SVG only in the local voice-control switches. */
-[class*="audioButtonParent_"] > button[role="switch"] [class*="lottieIcon_"] > svg {
+/* Hide original icons */
+[class*="audioButtonParent_"] button [class*="lottieIcon_"] > svg {
     display: none !important;
 }
 
-/* Custom icon layer. */
-[class*="audioButtonParent_"] > button[role="switch"] [class*="lottieIcon_"]::after {
+/* Base custom icon layer */
+[class*="audioButtonParent_"] button [class*="lottieIcon_"]::after {
     content: "";
     display: block;
     width: 21px;
@@ -31,177 +30,122 @@
     pointer-events: none;
 }
 
-/* Microphone: first audioButtonParent_ switch. */
-[class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
-    > button[role="switch"] {
+/* --- Microphone (identify by unique SVG path) --- */
+[class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *) > button {
+    /* Mic ON */
     &[aria-checked="false"] [class*="lottieIcon_"]::after {
-        background-image: var(--pup-mic-on);
+        background-image: var(--pup-speaking);
         scale: 1.3;
     }
-
-    &:is(
-        [aria-checked="true"],
-        [aria-disabled="true"],
-        :disabled,
-        [disabled],
-        [class*="redGlow"],
-        [class*="disabled"]
-    ) [class*="lottieIcon_"]::after {
-        background-image: var(--pup-mic-muted) !important;
+    /* Mic OFF or Server Mute */
+    &[aria-checked="true"] [class*="lottieIcon_"]::after,
+    &[aria-disabled="true"] [class*="lottieIcon_"]::after,
+    &[class*="redGlow"] [class*="lottieIcon_"]::after {
+        background-image: var(--pup-muted) !important;
         scale: 1.3;
     }
 }
 
-/* Headphones/deafen: subsequent audioButtonParent_ switches. */
-[class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
-    > button[role="switch"] {
+/* --- Headphones (second button) --- */
+[class*="audioButtonParent_"] ~ [class*="audioButtonParent_"] > button {
+    /* Listening */
     &[aria-checked="false"] [class*="lottieIcon_"]::after {
         background-image: var(--pup-listening);
         scale: 1.1;
     }
-
-    &:is(
-        [aria-checked="true"],
-        [aria-disabled="true"],
-        :disabled,
-        [disabled],
-        [class*="redGlow"],
-        [class*="disabled"]
-    ) [class*="lottieIcon_"]::after {
+    /* Deafened */
+    &[aria-checked="true"] [class*="lottieIcon_"]::after,
+    &[aria-disabled="true"] [class*="lottieIcon_"]::after,
+    &[class*="redGlow"] [class*="lottieIcon_"]::after {
         background-image: var(--pup-deafened) !important;
         scale: 1.1;
     }
 }
 
-/*
- * 2. PARTICIPANT STATUS ICONS
- *
- * Microphone muted by the user, server, or channel permissions = Muzz.
- * Sound/deafen disabled = Caged. These are separate SVG paths.
- */
+/* ==========================================================
+   2. PARTICIPANT STATUS ICONS (sidebar & call view)
+   ========================================================== */
 
-/* Server mute / microphone denied. */
-[class*="iconGroup_"] > svg[class*="icon_"]:has(path[d^="M21.76.83"]) > path {
+/* Muted microphone */
+[class*="iconGroup__"] > svg[class*="icon__"]:has(path[d^="M21.76"]) > path {
     display: none !important;
 }
-
-[class*="iconGroup_"] > svg[class*="icon_"]:has(path[d^="M21.76.83"]) {
-    background: var(--pup-mic-muted) center / contain no-repeat;
+[class*="iconGroup__"] > svg[class*="icon__"]:has(path[d^="M21.76"]) {
+    background: var(--pup-muted) center / contain no-repeat;
 }
 
-/* Self-muted microphone. */
-[class*="iconGroup_"] > svg[class*="icon_"]:has(path[d^="m2.7 22.7"]) > path {
+/* Deafened / sound disabled */
+[class*="iconGroup__"] > svg[class*="icon__"]:has(path[d^="m2.7 22.7"]) > path {
     display: none !important;
 }
-
-[class*="iconGroup_"] > svg[class*="icon_"]:has(path[d^="m2.7 22.7"]) {
-    background: var(--pup-mic-muted) center / contain no-repeat;
-}
-
-/* Deafened / sound disabled: crossed-out headset. */
-[class*="iconGroup_"] > svg[class*="icon_"]:has(path[d^="M22.7 2.7"]) > path {
-    display: none !important;
-}
-
-[class*="iconGroup_"] > svg[class*="icon_"]:has(path[d^="M22.7 2.7"]) {
+[class*="iconGroup__"] > svg[class*="icon__"]:has(path[d^="m2.7 22.7"]) {
     background: var(--pup-deafened) center / contain no-repeat;
 }
 
-/*
- * 3. VOICE-CONTROL TOOLTIPS
- * Keep the tooltip wording consistent with the icon on each actual control.
- */
+/* ==========================================================
+   3. TOOLTIPS (local controls)
+   ========================================================== */
 
 [class*="tooltip_"] div[data-text-variant="text-sm/medium"] {
     transition: font-size 0s;
     transition-delay: 180ms;
 }
 
-/* Muted/blocked microphone = Muzzled. */
+/* Muted / blocked microphone = Muzzled */
 body:has(
-    [class*="panels_"] [class*="buttons_"] :is(
-        button[aria-label*="microphone" i],
-        button[aria-label*="mic" i],
-        button[aria-label*="микрофон" i],
-        button[aria-label*="mute" i]:not([aria-label*="deafen" i]):not([aria-label*="sound" i]):not([aria-label*="audio" i]),
-        button[aria-label*="permission" i],
-        button[aria-label*="denied" i],
-        button[aria-label*="speak" i],
-        button[aria-label*="говор" i],
-        button[aria-label*="запрещ" i]
-    ):is([aria-checked="true"], [aria-disabled="true"], :disabled, [disabled], [data-disabled="true"], [class*="redGlow"], [class*="disabled"], [aria-label*="permission" i], [aria-label*="denied" i], [aria-label*="blocked" i], [aria-label*="speak" i], [aria-label*="говор" i], [aria-label*="запрещ" i]):hover
+    [class*="panels_"] [class*="buttons_"]
+    button:has([class*="lottieIcon_"] svg path[d^="M21.76"]):is(
+        [aria-checked="true"],
+        [aria-disabled="true"],
+        :disabled,
+        [class*="redGlow"]
+    ):hover
 ) {
     --pup-tooltip-text: "Muzzled";
 }
 
 /* Enabled microphone = Bark!! */
 body:has(
-    [class*="panels_"] [class*="buttons_"] :is(
-        button[aria-label*="microphone" i],
-        button[aria-label*="mic" i],
-        button[aria-label*="микрофон" i],
-        button[aria-label*="mute" i]:not([aria-label*="deafen" i]):not([aria-label*="sound" i]):not([aria-label*="audio" i])
-    )[aria-checked="false"]:not(:is([aria-disabled="true"], :disabled, [disabled], [data-disabled="true"], [class*="redGlow"], [class*="disabled"])):hover
+    [class*="panels_"] [class*="buttons_"]
+    button:has([class*="lottieIcon_"] svg path[d^="M21.76"])[aria-checked="false"]:not(
+        :is([aria-disabled="true"], :disabled, [class*="redGlow"])
+    ):hover
 ) {
     --pup-tooltip-text: "Bark!!";
 }
 
-/* Deafened / sound disabled = Caged. */
+/* Deafened / sound disabled = Caged */
 body:has(
-    [class*="panels_"] [class*="buttons_"] :is(
-        button[aria-label*="deafen" i],
-        button[aria-label*="headphone" i],
-        button[aria-label*="sound" i],
-        button[aria-label*="audio" i],
-        button[aria-label*="наушник" i],
-        button[aria-label*="звук" i],
-        button[aria-label*="прослуш" i]
-    ):is([aria-checked="true"], [aria-disabled="true"], :disabled, [disabled], [data-disabled="true"], [class*="redGlow"], [class*="disabled"]):hover
+    [class*="panels_"] [class*="buttons_"]
+    button:has([class*="lottieIcon_"] svg path[d^="M22.7 2.7"]):is(
+        [aria-checked="true"],
+        [aria-disabled="true"],
+        :disabled,
+        [class*="redGlow"]
+    ):hover
 ) {
     --pup-tooltip-text: "Caged";
 }
 
-/* Listening enabled = Cage. */
+/* Listening enabled = Cage */
 body:has(
-    [class*="panels_"] [class*="buttons_"] :is(
-        button[aria-label*="deafen" i],
-        button[aria-label*="headphone" i],
-        button[aria-label*="sound" i],
-        button[aria-label*="audio" i],
-        button[aria-label*="наушник" i],
-        button[aria-label*="звук" i],
-        button[aria-label*="прослуш" i]
-    )[aria-checked="false"]:not(:is([aria-disabled="true"], :disabled, [disabled], [data-disabled="true"], [class*="redGlow"], [class*="disabled"])):hover
+    [class*="panels_"] [class*="buttons_"]
+    button:has([class*="lottieIcon_"] svg path[d^="M22.7 2.7"])[aria-checked="false"]:not(
+        :is([aria-disabled="true"], :disabled, [class*="redGlow"])
+    ):hover
 ) {
     --pup-tooltip-text: "Cage";
 }
 
-/* Replace localized tooltip text only while hovering a matched voice control. */
+/* Replace tooltip text */
 body:has(
-    [class*="panels_"] [class*="buttons_"] :is(
-        button[aria-label*="microphone" i],
-        button[aria-label*="mic" i],
-        button[aria-label*="микрофон" i],
-        button[aria-label*="mute" i]:not([aria-label*="deafen" i]):not([aria-label*="sound" i]):not([aria-label*="audio" i]),
-        button[aria-label*="permission" i],
-        button[aria-label*="denied" i],
-        button[aria-label*="speak" i],
-        button[aria-label*="говор" i],
-        button[aria-label*="запрещ" i],
-        button[aria-label*="deafen" i],
-        button[aria-label*="headphone" i],
-        button[aria-label*="sound" i],
-        button[aria-label*="audio" i],
-        button[aria-label*="наушник" i],
-        button[aria-label*="звук" i],
-        button[aria-label*="прослуш" i]
-    ):hover
+    [class*="panels_"] [class*="buttons_"]
+    button:has([class*="lottieIcon_"] svg path[d^="M21.76"], [class*="lottieIcon_"] svg path[d^="M22.7 2.7"]):hover
 ) {
     [class*="tooltip_"] div[data-text-variant="text-sm/medium"] {
         font-size: 0 !important;
         line-height: 18px !important;
         transition-delay: 0s;
-
         &::after {
             content: var(--pup-tooltip-text, "");
             display: inline;
@@ -211,7 +155,9 @@ body:has(
     }
 }
 
-/* 4. TYPING INDICATOR */
+/* ==========================================================
+   4. TYPING INDICATOR
+   ========================================================== */
 
 [class*="typingDots"] > [class*="ellipsis"] + [class*="text"] {
     font-size: 0;
@@ -219,29 +165,12 @@ body:has(
 
     > strong {
         font-size: 12px;
-
-        &::after {
-            color: var(--text-subtle);
-            font-weight: 500;
-        }
-
-        &:last-child::after {
-            content: " is barking!!!";
-        }
-
-        &:last-child:not(:first-child)::after {
-            content: " are barking!!!";
-        }
-
-        &:nth-last-child(2)::after {
-            content: " and ";
-        }
-
-        &:nth-last-child(3)::after {
-            content: ", ";
-        }
+        &::after { color: var(--text-subtle); font-weight: 500; }
+        &:last-child::after                  { content: " is barking!!!"; }
+        &:last-child:not(:first-child)::after { content: " are barking!!!"; }
+        &:nth-last-child(2)::after            { content: " and "; }
+        &:nth-last-child(3)::after            { content: ", "; }
     }
-
     &:not(:has(> strong))::after {
         font-size: 12px;
         content: "Lots of barking...";
