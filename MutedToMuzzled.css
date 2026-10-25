@@ -66,7 +66,7 @@
    2. PARTICIPANT STATUS ICONS (sidebar)
    ========================================================== */
 
-/* Микрофон заглушен (ищем по уникальному фрагменту пути) */
+/* Server-muted / blocked microphone. */
 [class*="iconGroup__"] > svg[class*="icon__"]:has(path[d*="M21.76"]) > path {
     display: none !important;
 }
@@ -74,11 +74,19 @@
     background: var(--pup-muted) center / contain no-repeat !important;
 }
 
-/* Звук выключен (Deafen) — ловим оба возможных варианта пути */
-[class*="iconGroup__"] > svg[class*="icon__"]:has(path[d*="m2.7 22.7"], path[d*="M22.7 2.7"]) > path {
+/* Self-muted microphone: this path is a mic status, NOT a deafen status. */
+[class*="iconGroup__"] > svg[class*="icon__"]:has(path[d*="m2.7 22.7"]) > path {
     display: none !important;
 }
-[class*="iconGroup__"] > svg[class*="icon__"]:has(path[d*="m2.7 22.7"], path[d*="M22.7 2.7"]) {
+[class*="iconGroup__"] > svg[class*="icon__"]:has(path[d*="m2.7 22.7"]) {
+    background: var(--pup-muted) center / contain no-repeat !important;
+}
+
+/* Deafened / sound disabled: crossed-out headset. */
+[class*="iconGroup__"] > svg[class*="icon__"]:has(path[d*="M22.7 2.7"]) > path {
+    display: none !important;
+}
+[class*="iconGroup__"] > svg[class*="icon__"]:has(path[d*="M22.7 2.7"]) {
     background: var(--pup-deafened) center / contain no-repeat !important;
 }
 
