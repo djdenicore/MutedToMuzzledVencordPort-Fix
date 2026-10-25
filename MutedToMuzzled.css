@@ -13,41 +13,28 @@
 
 /*
  * 1. LOCAL VOICE CONTROLS
- *
- * Identify controls by their accessible action label rather than their
- * position in the button row. This prevents the camera button from being
- * mistaken for the microphone/deafen button.
- *
- * English and Russian labels are supported. The selectors are scoped to
- * Discord's user-panel buttons, not buttons elsewhere in the client.
+ * Use Discord's audioButtonParent_ wrappers instead of guessing button labels.
  */
 
-/* Microphone control: enabled = Bark; any muted/blocked state = Muzz. */
-[class*="panels_"] [class*="buttons_"] :is(
-    button[aria-label*="microphone" i],
-    button[aria-label*="mic" i],
-    button[aria-label*="микрофон" i],
-    button[aria-label*="mute" i]:not([aria-label*="deafen" i]):not([aria-label*="sound" i]):not([aria-label*="audio" i]),
-    button[aria-label*="permission" i],
-    button[aria-label*="denied" i],
-    button[aria-label*="speak" i],
-    button[aria-label*="говор" i],
-    button[aria-label*="запрещ" i]
-) {
-    [class*="lottieIcon_"] > svg {
-        display: none !important;
-    }
+/* Hide original icons only inside the local voice-control wrappers. */
+[class*="audioButtonParent_"] button [class*="lottieIcon_"] > svg {
+    display: none !important;
+}
 
-    [class*="lottieIcon_"]::after {
-        content: "";
-        display: block;
-        width: 21px;
-        height: 21px;
-        background: center / contain no-repeat;
-        pointer-events: none;
-    }
+/* Custom icon layer. */
+[class*="audioButtonParent_"] button [class*="lottieIcon_"]::after {
+    content: "";
+    display: block;
+    width: 21px;
+    height: 21px;
+    background: center / contain no-repeat;
+    pointer-events: none;
+}
 
-    &:is([aria-checked="false"], [aria-pressed="false"]) [class*="lottieIcon_"]::after {
+/* First audioButtonParent_ control = microphone. */
+[class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *) > button {
+    &[aria-checked="false"] [class*="lottieIcon_"]::after,
+    &[aria-pressed="false"] [class*="lottieIcon_"]::after {
         background-image: var(--pup-mic-on);
         scale: 1.3;
     }
@@ -58,46 +45,18 @@
         [aria-disabled="true"],
         :disabled,
         [disabled],
-        [data-disabled="true"],
         [class*="redGlow"],
-        [class*="disabled"],
-        [aria-label*="permission" i],
-        [aria-label*="denied" i],
-        [aria-label*="blocked" i],
-        [aria-label*="speak" i],
-        [aria-label*="говор" i],
-        [aria-label*="запрещ" i],
-        :has([class*="lottieIcon_"] svg path[d^="M21.76.83"])
+        [class*="disabled"]
     ) [class*="lottieIcon_"]::after {
         background-image: var(--pup-mic-muted) !important;
         scale: 1.3;
     }
 }
 
-/* Deafen/listening control: enabled = Cage; deafen active = Caged. */
-[class*="panels_"] [class*="buttons_"] :is(
-    button[aria-label*="deafen" i],
-    button[aria-label*="headphone" i],
-    button[aria-label*="sound" i],
-    button[aria-label*="audio" i],
-    button[aria-label*="наушник" i],
-    button[aria-label*="звук" i],
-    button[aria-label*="прослуш" i]
-) {
-    [class*="lottieIcon_"] > svg {
-        display: none !important;
-    }
-
-    [class*="lottieIcon_"]::after {
-        content: "";
-        display: block;
-        width: 21px;
-        height: 21px;
-        background: center / contain no-repeat;
-        pointer-events: none;
-    }
-
-    &:is([aria-checked="false"], [aria-pressed="false"]) [class*="lottieIcon_"]::after {
+/* Following audioButtonParent_ control = headphones/deafen. */
+[class*="audioButtonParent_"] ~ [class*="audioButtonParent_"] > button {
+    &[aria-checked="false"] [class*="lottieIcon_"]::after,
+    &[aria-pressed="false"] [class*="lottieIcon_"]::after {
         background-image: var(--pup-listening);
         scale: 1.1;
     }
@@ -108,32 +67,12 @@
         [aria-disabled="true"],
         :disabled,
         [disabled],
-        [data-disabled="true"],
         [class*="redGlow"],
         [class*="disabled"]
     ) [class*="lottieIcon_"]::after {
         background-image: var(--pup-deafened) !important;
         scale: 1.1;
     }
-}
-
-/*
- * Explicit server-mute / Speak-permission block override for the local panel.
- * Discord can show this blocked-microphone SVG without a reliable checked or
- * disabled state, so key off the icon itself and force Muzz.
- */
-[class*="panels_"] [class*="buttons_"] button:has([class*="lottieIcon_"] svg path[d^="M21.76.83"]) [class*="lottieIcon_"] > svg {
-    display: none !important;
-}
-
-[class*="panels_"] [class*="buttons_"] button:has([class*="lottieIcon_"] svg path[d^="M21.76.83"]) [class*="lottieIcon_"]::after {
-    content: "";
-    display: block;
-    width: 21px;
-    height: 21px;
-    background: var(--pup-mic-muted) center / contain no-repeat !important;
-    scale: 1.3;
-    pointer-events: none;
 }
 
 /*
@@ -309,54 +248,4 @@ body:has(
         font-size: 12px;
         content: "Lots of barking...";
     }
-}
-
-
-/*
- * 5. FALLBACK FOR CURRENT DISCORD PANEL MARKUP
- * Some Discord builds expose the mic control as Mute/Unmute and no longer
- * use the lottieIcon_ wrapper or checked/pressed state for this button.
- * Target the accessible label directly so the icon swap does not depend on
- * Discord's internal SVG class names or toggle attributes.
- */
-[class*="panels_"] [class*="buttons_"] [aria-label*="mute" i] {
-    position: relative !important;
-}
-
-[class*="panels_"] [class*="buttons_"] [aria-label*="mute" i] svg {
-    opacity: 0 !important;
-}
-
-[class*="panels_"] [class*="buttons_"] [aria-label*="mute" i]::after {
-    content: "";
-    display: block !important;
-    position: absolute;
-    inset: 0;
-    margin: auto;
-    width: 21px;
-    height: 21px;
-    background: var(--pup-mic-on) center / contain no-repeat !important;
-    scale: 1.3;
-    pointer-events: none;
-    z-index: 2;
-}
-
-[class*="panels_"] [class*="buttons_"] [aria-label*="mute" i]:is(
-    [aria-label*="unmute" i],
-    [aria-checked="true"],
-    [aria-pressed="true"],
-    [aria-disabled="true"],
-    :disabled,
-    [disabled],
-    [data-disabled="true"],
-    [class*="redGlow"],
-    [class*="disabled"],
-    [aria-label*="blocked" i],
-    [aria-label*="permission" i],
-    [aria-label*="denied" i],
-    [aria-label*="speak" i],
-    [aria-label*="говор" i],
-    [aria-label*="запрещ" i]
-)::after {
-    background-image: var(--pup-mic-muted) !important;
 }
