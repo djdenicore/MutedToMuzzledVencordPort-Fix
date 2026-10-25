@@ -13,16 +13,16 @@
 
 /*
  * 1. LOCAL VOICE CONTROLS
- * Use Discord's audioButtonParent_ wrappers instead of guessing button labels.
+ * Use the known-working audioButtonParent_ + role="switch" selectors.
  */
 
-/* Hide original icons only inside the local voice-control wrappers. */
-[class*="audioButtonParent_"] button [class*="lottieIcon_"] > svg {
+/* Hide Discord's original SVG only in the local voice-control switches. */
+[class*="audioButtonParent_"] > button[role="switch"] [class*="lottieIcon_"] > svg {
     display: none !important;
 }
 
 /* Custom icon layer. */
-[class*="audioButtonParent_"] button [class*="lottieIcon_"]::after {
+[class*="audioButtonParent_"] > button[role="switch"] [class*="lottieIcon_"]::after {
     content: "";
     display: block;
     width: 21px;
@@ -31,17 +31,16 @@
     pointer-events: none;
 }
 
-/* First audioButtonParent_ control = microphone. */
-[class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *) > button {
-    &[aria-checked="false"] [class*="lottieIcon_"]::after,
-    &[aria-pressed="false"] [class*="lottieIcon_"]::after {
+/* Microphone: first audioButtonParent_ switch. */
+[class*="audioButtonParent_"]:not([class*="audioButtonParent_"] ~ *)
+    > button[role="switch"] {
+    &[aria-checked="false"] [class*="lottieIcon_"]::after {
         background-image: var(--pup-mic-on);
         scale: 1.3;
     }
 
     &:is(
         [aria-checked="true"],
-        [aria-pressed="true"],
         [aria-disabled="true"],
         :disabled,
         [disabled],
@@ -53,17 +52,16 @@
     }
 }
 
-/* Following audioButtonParent_ control = headphones/deafen. */
-[class*="audioButtonParent_"] ~ [class*="audioButtonParent_"] > button {
-    &[aria-checked="false"] [class*="lottieIcon_"]::after,
-    &[aria-pressed="false"] [class*="lottieIcon_"]::after {
+/* Headphones/deafen: subsequent audioButtonParent_ switches. */
+[class*="audioButtonParent_"] ~ [class*="audioButtonParent_"]
+    > button[role="switch"] {
+    &[aria-checked="false"] [class*="lottieIcon_"]::after {
         background-image: var(--pup-listening);
         scale: 1.1;
     }
 
     &:is(
         [aria-checked="true"],
-        [aria-pressed="true"],
         [aria-disabled="true"],
         :disabled,
         [disabled],
