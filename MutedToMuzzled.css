@@ -47,13 +47,14 @@
         pointer-events: none;
     }
 
-    &[aria-checked="false"] [class*="lottieIcon_"]::after {
+    &:is([aria-checked="false"], [aria-pressed="false"]) [class*="lottieIcon_"]::after {
         background-image: var(--pup-mic-on);
         scale: 1.3;
     }
 
     &:is(
         [aria-checked="true"],
+        [aria-pressed="true"],
         [aria-disabled="true"],
         :disabled,
         [disabled],
@@ -96,13 +97,14 @@
         pointer-events: none;
     }
 
-    &[aria-checked="false"] [class*="lottieIcon_"]::after {
+    &:is([aria-checked="false"], [aria-pressed="false"]) [class*="lottieIcon_"]::after {
         background-image: var(--pup-listening);
         scale: 1.1;
     }
 
     &:is(
         [aria-checked="true"],
+        [aria-pressed="true"],
         [aria-disabled="true"],
         :disabled,
         [disabled],
